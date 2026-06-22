@@ -366,3 +366,15 @@ SET PrecoLivro = 60.00, NumeroPaginas = 320
 WHERE IdLivro = 105;
 
 SELECT NomeLivro, PrecoLivro, NumeroPaginas FROM Livro WHERE IdLivro = 105; 
+
+-- DÉCIMA TERCEIRA PARTE - ALIASES COM AS
+
+SELECT NomeLivro AS Livros FROM Livro
+
+SELECT A.NomeAutor AS Nome, A.SobrenomeAutor AS Sobrenome FROM Autor AS A;
+
+SELECT TOP (3) NomeLivro AS 'Livros mais caros', PrecoLivro AS 'Preço do Livro'
+FROM Livro AS L
+ORDER BY 'Preço do Livro' DESC;
+
+-- se caso eu quiser tirar todos os ALIAS (AS) a consulta vai funcionar e nomear da mesma forma
