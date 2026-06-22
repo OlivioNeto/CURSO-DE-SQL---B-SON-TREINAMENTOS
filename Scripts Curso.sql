@@ -308,11 +308,6 @@ WHERE NomeAssunto = 'Policial';
 
 -- DÉCIMA PRIMEIRA PARTE - LIMPAR TABELAS (TRUNCATE)
 
-CREATE TABLE TESTE (
-	IDTESTE SMALLINT PRIMARY KEY IDENTITY,
-	VALORTESTE SMALLINT NOT NULL
-);
-
 -- Rotina para inserir dados na tabela
 DECLARE @Contador INT = 1
 
@@ -402,3 +397,31 @@ WHERE PrecoLivro >= 20.00
 AND DataPub BETWEEN '20050620' AND '20100620'
 OR DataPub BETWEEN '20160101' AND '20200101'
 ORDER BY DataPub DESC;
+
+-- DÉCIMA SEXTA PARTE - OPERADOR UNION
+
+SELECT NomeAutor Nome, 'Autor' AS Tipo 
+FROM AUTOR
+UNION
+SELECT NomeEditora Nome, 'Editora' AS Tipo
+FROM Editora
+
+-- nomes dos livros e seus assuntos
+SELECT NomeLivro AS Nome, 'Livro' AS Tipo
+FROM Livro
+UNION
+SELECT NomeAssunto AS Nome, 'Assunto' AS Tipo
+FROM Assunto
+
+-- indicando o nome de tudo no banco em uma única linha
+SELECT NomeAutor AS Nome, 'Autor' AS Tipo
+FROM Autor
+UNION
+SELECT NomeEditora AS Nome, 'Editora' AS Tipo
+FROM Editora
+UNION
+SELECT NomeAssunto AS Nome, 'Assunto' AS Tipo
+FROM Assunto
+UNION
+SELECT NomeLivro AS Nome, 'Livro' AS Tipo
+FROM Livro
