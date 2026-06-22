@@ -11,7 +11,7 @@ SIZE = 1MB,
 FILEGROWTH = 1MB)
 GO
 
--- PRIMEIRA PARTE
+-- PRIMEIRA PARTE - CRIAR BANCO DE DADOS
 -- Consultar bancos existentes
 SELECT name
 FROM master.sys.databases
@@ -35,10 +35,10 @@ ALTER DATABASE teste01
 SET SINGLE_USER WITH ROLLBACK IMMEDIATE
 DROP DATABASE teste01;*/
 
--- SEGUNDA PARTE 
+-- SEGUNDA PARTE - CONSTRAINTS 
 -- foi somente teoria, sem nada prático, explicando o que significa cada CONSTRAINT
 
--- TERCEIRA PARTE
+-- TERCEIRA PARTE - CRIAR TABELA
 CREATE DATABASE Biblioteca;
 
 CREATE TABLE Autor1 (
@@ -86,7 +86,7 @@ CONSTRAINT pk_livro_autor PRIMARY KEY (IdLivro, IdAutor)
 
 SELECT name FROM Biblioteca.sys.tables
 
--- QUARTA PARTE
+-- QUARTA PARTE - ALTERAR E EXCLUIR TABELAS
 
 -- adicionando uma nova coluna a uma tabela existente
 ALTER TABLE Livro
@@ -117,7 +117,7 @@ DROP COLUMN Edição;
 -- renomear uma tabela: sp_rename
 /*sp_rename 'tbl_Livros' , 'Livro';*/
 
--- QUINTA PARTE
+-- QUINTA PARTE - INSERIR REGISTROS
 
 -- inserção dos dados nas suas respectivas tabelas
 
@@ -196,7 +196,7 @@ INNER JOIN Autor
 ORDER BY NomeLivro;
 
 
--- SEXTA PARTE
+-- SEXTA PARTE - CONSULTAS SIMPLES (SELECT FROM)
 
 -- foram feitos selects simples, sem muita complexidade e que eu já sabia
 
@@ -229,7 +229,7 @@ SELECT *
 INTO LivrosFiccao
 FROM Livro WHERE IdAssunto = 1;
 
--- SÉTIMA PARTE
+-- SÉTIMA PARTE - ORDENAÇÃO DE RESULTADOS
 
 SELECT * FROM Livro
 ORDER BY NomeLivro;
@@ -246,7 +246,7 @@ SELECT NomeLivro, PrecoLivro, IdEditora
 FROM Livro
 ORDER BY IdEditora ASC, PrecoLivro DESC;
 
--- OITAVA PARTE
+-- OITAVA PARTE - SELECT TOP
 
 SELECT TOP (2) NomeLivro
 FROM Livro
@@ -264,12 +264,12 @@ SELECT TOP (4) NomeLivro, PrecoLivro
 FROM Livro
 ORDER BY PrecoLivro DESC;
 
--- WITH TIES
+-- with ties
 SELECT TOP (3) WITH TIES NomeLivro, IdAssunto
 FROM Livro
 ORDER BY IdAssunto DESC;
 
--- NONA PARTE
+-- NONA PARTE - FILTROS COM WHERE
 
 SELECT NomeLivro, DataPub
 FROM Livro
@@ -293,7 +293,7 @@ WHERE IdEditora = (
 )
 ORDER BY NomeLivro;
 
--- DÉCIMA PARTE
+-- DÉCIMA PARTE - EXCLUIR REGISTROS (DELETE)
 
 SELECT * FROM Assunto;
 
@@ -305,3 +305,27 @@ VALUES ('Policial');
 
 DELETE FROM Assunto
 WHERE NomeAssunto = 'Policial';
+
+-- DÉCIMA PRIMEIRA PARTE - LIMPAR TABELAS (TRUNCATE)
+
+CREATE TABLE TESTE (
+	IDTESTE SMALLINT PRIMARY KEY IDENTITY,
+	VALORTESTE SMALLINT NOT NULL
+);
+
+-- Rotina para inserir dados na tabela
+DECLARE @Contador INT = 1
+
+WHILE @Contador <= 100
+BEGIN 
+	INSERT INTO TESTE (VALORTESTE) VALUES (@Contador *3)
+	SET @Contador = @Contador + 1
+END
+
+SELECT * FROM TESTE; 
+
+-- limpando os dados da tabela
+TRUNCATE TABLE TESTE;
+
+-- verificar o valor atual de IDENTITY
+SELECT IDENT_CURRENT('TESTE');
