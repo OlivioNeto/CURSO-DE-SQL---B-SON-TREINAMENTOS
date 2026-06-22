@@ -292,3 +292,16 @@ WHERE IdEditora = (
 	WHERE NomeEditora = 'Aleph'
 )
 ORDER BY NomeLivro;
+
+-- DÉCIMA PARTE
+
+SELECT * FROM Assunto;
+
+DELETE FROM Assunto
+WHERE IdAssunto = 8;
+
+INSERT INTO Assunto (NomeAssunto)
+VALUES ('Policial');
+
+DELETE FROM Assunto
+WHERE NomeAssunto = 'Policial';
