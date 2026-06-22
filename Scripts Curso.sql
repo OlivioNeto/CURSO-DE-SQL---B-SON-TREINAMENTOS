@@ -462,3 +462,71 @@ WHERE PrecoLivro = (
 	SELECT MAX(PrecoLivro)
 FROM Livro);
 
+-- DÉCIMA OITAVA PARTE - OPERADOR LIKE
+
+/*
+METACARACTERES
+% - qualquer cadeia de 0 ou mais caracteres
+_ qualquer caractere único
+[] caracteres únicos no intervalo ou conjunto especificado
+[^] caracteres únicos NÃO no intervalo ou conjunto especificado
+*/
+
+-- livros com o nome iniciado com a letra f
+SELECT *
+FROM Livro
+WHERE NomeLivro LIKE 'F%';
+
+SELECT NomeAutor
+FROM Autor
+WHERE NomeAutor NOT LIKE 'S%'
+
+-- livros que começam ou com a letra F ou D
+SELECT *
+FROM Livro
+WHERE NomeLivro LIKE '[FD]%';
+
+-- livros que começam com vogais e sem ascento
+SELECT *
+FROM Livro
+WHERE NomeLivro LIKE '%[aeiou]'
+
+-- livros que terminam com vogais e sem ascento
+SELECT *
+FROM Livro
+WHERE NomeLivro LIKE '[aeiou]%'
+
+-- livros que começam com números
+SELECT *
+FROM Livro
+WHERE NomeLivro LIKE '[0-9]%'
+
+-- livros que começam com a letra a e terminam com o
+SELECT *
+FROM Livro
+WHERE NomeLivro LIKE 'A%o'
+
+-- nome que começa com R e sobrenome que começa com B
+SELECT NomeAutor, SobrenomeAutor
+FROM Autor
+WHERE NomeAutor LIKE 'R%' AND SobrenomeAutor LIKE 'B%'
+
+-- penultimo caractere seja uma vogal
+SELECT *
+FROM Livro
+WHERE NomeLivro LIKE '%[aeiou]_'
+
+-- nome das editoram que inicam entre O e T
+SELECT NomeEditora
+FROM Editora
+WHERE NomeEditora LIKE '[o-t]%'
+
+-- nome do autor que tenha 4 letras e comece com a letra J
+SELECT NomeAutor, SobrenomeAutor
+FROM Autor
+WHERE NomeAutor LIKE 'J___';
+
+-- começam com uma consoante, sem números
+SELECT *
+FROM Livro
+WHERE NomeLivro NOT LIKE '[aeiou0-9]%'
