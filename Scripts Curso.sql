@@ -425,3 +425,40 @@ FROM Assunto
 UNION
 SELECT NomeLivro AS Nome, 'Livro' AS Tipo
 FROM Livro
+
+-- DÉCIMA SÉTIMA PARTE - FUNÇÕES DE AGREGAÇÃO
+
+-- quantos
+SELECT COUNT(*) Total 
+FROM Autor;
+
+-- maior valor
+SELECT MAX(PrecoLivro) 'Mais Caro'
+FROM Livro;
+
+-- menor valor
+SELECT MIN(NumeroPaginas)
+FROM Livro;
+
+-- média dos valores
+SELECT AVG(PrecoLivro) 'Preço Médio'
+FROM Livro
+
+-- soma
+SELECT SUM(PrecoLivro) 'Valor Total'
+FROM Livro
+
+SELECT COUNT(*) Total 
+FROM Livro
+WHERE IdAssunto = 1;
+
+SELECT SUM(PrecoLivro) / COUNT (*) AS 'Preço Médio'
+FROM Livro
+
+-- sub consulta que mostra o nome e valor do livro mais caro
+SELECT NomeLivro, PrecoLivro
+FROM Livro
+WHERE PrecoLivro = (
+	SELECT MAX(PrecoLivro)
+FROM Livro);
+
