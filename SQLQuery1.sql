@@ -378,3 +378,27 @@ FROM Livro AS L
 ORDER BY 'Preço do Livro' DESC;
 
 -- se caso eu quiser tirar todos os ALIAS (AS) a consulta vai funcionar e nomear da mesma forma
+
+-- DÉCIMA QUARTE PARTE - OPERADPRES LÓGICOS
+
+SELECT * FROM LIVRO
+WHERE IdLivro > 102 AND IdEditora < 4;
+
+SELECT * FROM Livro
+WHERE IdLivro > 110 OR IdEditora < 4;
+
+SELECT * FROM Livro
+WHERE IdLivro > 110 OR NOT IdEditora < 4;
+
+SELECT * FROM Livro
+WHERE DataPub BETWEEN '2004-05-07' AND '20140507';
+
+SELECT NomeLivro AS Livro, PrecoLivro as Preço FROM Livro
+WHERE PrecoLivro BETWEEN 50.00 AND 100.00;
+
+SELECT NomeLivro, DataPub, PrecoLivro
+FROM LIVRO
+WHERE PrecoLivro >= 20.00
+AND DataPub BETWEEN '20050620' AND '20100620'
+OR DataPub BETWEEN '20160101' AND '20200101'
+ORDER BY DataPub DESC;
