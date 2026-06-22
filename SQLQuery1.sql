@@ -327,5 +327,42 @@ SELECT * FROM TESTE;
 -- limpando os dados da tabela
 TRUNCATE TABLE TESTE;
 
--- verificar o valor atual de IDENTITY
+-- verificar o valor atual de identity
 SELECT IDENT_CURRENT('TESTE');
+
+-- DÉCIMA SEGUNDA PARTE - ATUALIZAR TABELAS (UPDATE)
+
+UPDATE Livro
+SET NomeLivro = 'Eu, Robô'
+WHERE IdLivro = 116;
+
+SELECT IdLivro, NomeLivro FROM Livro WHERE IdLivro = 116
+
+UPDATE Livro
+SET NomeLivro = '2001 - Uma Odisséia no Espaço'
+WHERE IdLivro = 103
+
+SELECT IdLivro, NomeLivro FROM Livro WHERE IdLivro = 103
+
+UPDATE Livro
+SET PrecoLivro = 60.00
+WHERE IdLivro = 105;
+
+SELECT NomeLivro, PrecoLivro FROM Livro WHERE IdLivro = 105
+
+-- subindo o valor em 10%
+UPDATE Livro
+SET PrecoLivro = PrecoLivro * 1.1
+WHERE IdLivro = 105;
+
+-- descendo o preço em 20%
+UPDATE Livro
+SET PrecoLivro = PrecoLivro * 0.8
+WHERE IdLivro = 105;
+
+-- altereando duas colunas de uma vez, preço e número de páginas
+UPDATE Livro
+SET PrecoLivro = 60.00, NumeroPaginas = 320
+WHERE IdLivro = 105;
+
+SELECT NomeLivro, PrecoLivro, NumeroPaginas FROM Livro WHERE IdLivro = 105; 
