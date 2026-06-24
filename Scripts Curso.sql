@@ -309,7 +309,7 @@ WHERE NomeAssunto = 'Policial';
 -- DÉCIMA PRIMEIRA PARTE - LIMPAR TABELAS (TRUNCATE)
 
 -- Rotina para inserir dados na tabela
-DECLARE @Contador INT = 1
+/*DECLARE @Contador INT = 1
 
 WHILE @Contador <= 100
 BEGIN 
@@ -318,6 +318,7 @@ BEGIN
 END
 
 SELECT * FROM TESTE; 
+*/
 
 -- limpando os dados da tabela
 TRUNCATE TABLE TESTE;
