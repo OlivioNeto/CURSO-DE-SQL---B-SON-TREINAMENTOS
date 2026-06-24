@@ -530,3 +530,55 @@ WHERE NomeAutor LIKE 'J___';
 SELECT *
 FROM Livro
 WHERE NomeLivro NOT LIKE '[aeiou0-9]%'
+
+-- DÉCIMA NONA PARTE - BACKUP E RESTAURAÇÃO DE BD
+
+/*
+BACKUP DATABASE NOME_BANCO
+TO DISK = 'X:\CAMINHO\NOME_BANCO.bak'
+[WITH FORMAT]
+GO
+
+RESTORE DATABASE NOME_BANCO
+FROM DISK = 'X:\CAMINHO\NOME_BANCO.bak'
+[WITH FORMAT] 
+GO
+
+USE master;
+GO
+ALTER DATABASE NOME_BANCO
+SET single_user WITCH ROLLBACK immediate;
+GO
+DROP DATABASE NOME_BANCO;
+GO
+
+RESTORE DATABASE NOME_BANCO
+FROM DISK = 'X:\CAMINHO\NOME_BANCO.BAK';
+GO
+*/
+
+-- VIGÉSIMA PARTE - CLÁUSULA INNER JOIN
+
+SELECT * 
+FROM Livro
+	INNER JOIN Assunto
+	ON Livro.IdAssunto = Assunto.IdAssunto;
+
+SELECT L.NomeLivro Livros, E.NomeEditora Editoras
+FROM Livro L
+	INNER JOIN Editora E
+	ON L.IdEditora = E.IdEditora
+WHERE E.NomeEditora LIKE '[MH]%'
+ORDER BY L.NomeLivro;
+
+
+-- NOME DO LIVRO, NOME E SOBRENOME DOS AUTORES
+SELECT L.NomeLivro Livro, E.NomeEditora Editora, A.NomeAutor Nome, A.SobrenomeAutor Sobrenome
+FROM Livro L
+	INNER JOIN LivroAutor LA
+	ON L.IdLivro = LA.IdLivro
+	INNER JOIN Autor A
+	ON LA.IdAutor = A.IdAutor
+	INNER JOIN Editora E
+	ON L.IdEditora = E.IdEditora
+ORDER BY Livro

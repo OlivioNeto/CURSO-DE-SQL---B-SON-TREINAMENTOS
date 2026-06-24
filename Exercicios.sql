@@ -100,7 +100,7 @@ WHERE PrecoLivro > (
 /* esse aqui eu não entendi muito bem
 o erro que estava fazendo era de lógica, comparando número com texto
 SELECT NomeLivro, PrecoLivro FROM Livro
-WHERE PrecoLivro > (SELECT PrecoLivro FROM LivroWHERE NomeLivro = 'Dom Casmurro'
+WHERE PrecoLivro > (SELECT PrecoLivro FROM Livro WHERE NomeLivro = 'Dom Casmurro'
 )
 */
 
