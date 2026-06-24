@@ -581,4 +581,62 @@ FROM Livro L
 	ON LA.IdAutor = A.IdAutor
 	INNER JOIN Editora E
 	ON L.IdEditora = E.IdEditora
-ORDER BY Livro
+ORDER BY Livro;
+
+-- EXERCÍCIOS INNER JOIN
+
+-- 01 nome do livro e seus assuntos
+SELECT L.NomeLivro Livro, A.NomeAssunto Assunto
+FROM Livro L
+	INNER JOIN Assunto A
+	ON L.IdAssunto = A.IdAssunto
+ORDER BY Livro;
+
+-- 02 nome e sobrenome do autor, livro escrito por cada um e assunto dos livros
+SELECT AU.NomeAutor + ' ' + AU.SobrenomeAutor [Nome Completo], L.NomeLivro Livro, A.NomeAssunto Assunto
+FROM LivroAutor LA
+	INNER JOIN Autor AU
+	ON LA.IdAutor = AU.IdAutor
+	INNER JOIN Livro L
+	ON LA.IdLivro = L.IdLivro
+	INNER JOIN Assunto A
+	ON L.IdAssunto = A.IdAssunto
+ORDER BY [Nome Completo];
+
+-- 03 nome dos livros, preco, editora e assunto, ordenado pelo nome dos livros
+SELECT L.NomeLivro 'Nome do Livro', L.PrecoLivro Preço, E.NomeEditora 'Editora Responsável', A.NomeAssunto 'Assunto do Livro'
+FROM Livro L
+	INNER JOIN Editora E
+	ON L.IdEditora = E.IdEditora
+	INNER JOIN Assunto A
+	ON L.IdAssunto = A.IdAssunto
+ORDER BY [Nome do Livro];
+
+-- 04 nome dos livros e data de publicação, quando o sobrenome do autor começar com a letra b
+SELECT L.NomeLivro 'Nome do Livro', L.DataPub 'Data de publicação', A.NomeAutor + ' ' + A.SobrenomeAutor [Nome completo]
+FROM Livro L
+	INNER JOIN LivroAutor LA
+	ON L.IdLivro = LA.IdLivro
+	INNER JOIN Autor A
+	ON LA.IdAutor = A.IdAutor
+WHERE A.SobrenomeAutor LIKE '[B]%'
+ORDER BY A.NomeAutor;
+
+-- 05 assuntos do livro e sobrenomes dos autores dos livros que custam mais que 80 reais
+SELECT A.NomeAssunto Assunto, AU.SobrenomeAutor Sobrenome, L.PrecoLivro Preço
+FROM Livro L
+	INNER JOIN LivroAutor LA
+	ON L.IdLivro = LA.IdLivro
+	INNER JOIN Autor AU
+	ON LA.IdAutor = AU.IdAutor
+	INNER JOIN Assunto A
+	ON L.IdAssunto = A.IdAssunto
+WHERE L.PrecoLivro > 80.00;
+
+-- 06 preço, assunto e nome dos livros que custam entre 70 e 170, ordenado do mais caro para o mais barato
+SELECT L.NomeLivro 'Nome do Livro', L.PrecoLivro Preço, A.NomeAssunto Assunto
+FROM Livro L
+	INNER JOIN Assunto A
+	ON L.IdAssunto = A.IdAssunto
+WHERE PrecoLivro BETWEEN 70.00 AND 170
+ORDER BY PrecoLivro DESC;
