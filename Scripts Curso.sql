@@ -641,3 +641,35 @@ FROM Livro L
 	ON L.IdAssunto = A.IdAssunto
 WHERE PrecoLivro BETWEEN 70.00 AND 170
 ORDER BY PrecoLivro DESC;
+
+
+-- VIGÉSIMA PRIMEIRA PARTE - OUTER JOINS
+
+SELECT *
+FROM Editora E
+LEFT JOIN Livro L
+ON L.IdEditora = E.IdEditora
+
+SELECT *
+FROM Livro L 
+LEFT JOIN Editora E
+ON L.IdEditora = E.IdEditora;
+
+SELECT *
+FROM Editora E
+RIGHT JOIN Livro L
+ON L.IdEditora = E.IdEditora;
+
+SELECT *
+FROM Livro L 
+RIGHT JOIN Editora E
+ON L.IdEditora = E.IdEditora;
+
+SELECT *
+FROM Livro L 
+FULL JOIN Editora E
+ON L.IdEditora = E.IdEditora;
+
+SELECT *
+FROM Livro
+CROSS JOIN Assunto;
