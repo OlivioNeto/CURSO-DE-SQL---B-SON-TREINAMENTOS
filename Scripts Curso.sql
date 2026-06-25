@@ -739,3 +739,79 @@ WHERE IdEditora IN (
 		)
 )
 ORDER BY NomeEditora;
+
+-- VIGÉSIMA QUARTA PARTE - STORED PROCEDURES
+
+CREATE PROCEDURE sp_teste
+AS
+SELECT 'Olivio Neto' AS Nome
+
+EXEC sp_teste;
+
+CREATE PROCEDURE sp_LivroValor
+AS
+BEGIN
+	SELECT NomeLivro Título, PrecoLivro Valor
+	FROM Livro;
+END
+GO
+
+EXEC sp_LivroValor
+
+ALTER PROCEDURE sp_LivroValor
+AS
+BEGIN
+	SELECT NomeLivro Título, PrecoLivro Valor
+	FROM Livro
+	WHERE PrecoLivro >= 150.00;
+END
+GO
+
+EXEC sp_helptext sp_LivroISBN
+
+-- procedure criptografado
+CREATE PROCEDURE sp_LivroISBN
+WITH ENCRYPTION 
+AS 
+BEGIN
+	SELECT NomeLivro, ISBN13
+	FROM Livro;
+END
+GO
+
+EXEC sp_LivroISBN
+
+ALTER PROCEDURE sp_teste (@p1 AS INT, @p2 AS VARCHAR (20))
+AS
+SELECT @p1 AS 'Parâmetro 01', @p2 AS 'Parâmetro 02';
+
+exec sp_teste 55, 'Laranja';
+
+-- usuário informa qual livro quer e quantos quer, retorna o valor
+ALTER PROCEDURE sp_LivroValor (
+	@ID SMALLINT, @Qtde SMALLINT)
+AS 
+BEGIN
+	SELECT NomeLivro Título, @Qtde Quantidade, PrecoLivro * @Qtde 'Valor Total'
+	FROM Livro
+	WHERE IdLivro = @ID
+END
+GO
+     
+EXEC sp_LivroValor 104, 5;
+
+-- cadastra dados no banco
+CREATE OR ALTER PROCEDURE sp_cadastra_editora (
+	@nome VARCHAR (50))
+AS 
+BEGIN
+	SET NOCOUNT ON -- não mostra as linhas que foram afetadas
+	INSERT INTO Editora(NomeEditora)
+	VALUES (@nome);
+END
+GO
+
+EXEC sp_cadastra_editora 'Mskron Books';
+SELECT * FROM Editora
+
+DROP PROCEDURE sp_LivroValor
