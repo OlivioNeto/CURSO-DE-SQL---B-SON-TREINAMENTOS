@@ -682,8 +682,6 @@ CROSS JOIN Assunto;
 	ORDER BY PrecoLivro;
 */
 
-SELECT * FROM vwLivroPreco
-
 EXEC sp_helptext vwLivroPReco
 
 IF OBJECT_ID('vwLivroAssunto', 'view') IS NOT NULL
@@ -698,10 +696,46 @@ GO
 
 SELECT * FROM vwLivroAssunto;
 
-ALTER VIEW vwLivroAssunto AS
+--ALTER VIEW vwLivroAssunto AS
 	SELECT L.NomeLivro Livro, L.ISBN13, A.NomeAssunto Assunto
 	FROM Livro L
 	JOIN Assunto A
 	ON L.IdAssunto = A.IdAssunto;
 
-DROP VIEW vwLivroPreco;
+-- VIGÉSIMA TERCEIRA PARTE - SUCONSULTAS (SUBQUERIES)
+
+SELECT NomeLivro, IdEditora
+FROM Livro
+WHERE IdEditora = (
+	SELECT IdEditora
+	FROM Editora
+	WHERE NomeEditora = 'Aleph'
+)
+ORDER BY NomeLivro;
+
+SELECT NomeEditora
+FROM Editora
+WHERE IdEditora IN (
+	SELECT IdEditora
+	FROM Livro
+	WHERE IdAssunto IN(1,3,7)
+)
+ORDER BY NomeEditora;
+
+SELECT L.NomeLivro, L.PrecoLivro
+FROM Livro L,
+	(SELECT AVG(PrecoLivro) AS MediaPreco FROM Livro) AS Subconsulta
+WHERE L.PrecoLivro > Subconsulta.MediaPreco
+
+SELECT NomeEditora
+FROM Editora
+WHERE IdEditora IN (
+	SELECT IdEditora
+	FROM Livro
+	WHERE IdAssunto = (
+		SELECT IdAssunto
+		FROM Assunto
+		WHERE NomeAssunto = 'Ficção Científica'
+		)
+)
+ORDER BY NomeEditora;
