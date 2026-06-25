@@ -673,3 +673,35 @@ ON L.IdEditora = E.IdEditora;
 SELECT *
 FROM Livro
 CROSS JOIN Assunto;
+
+-- VIGÉSIMA SEGUNDA PARTE - EXIBIÇÕES, VIEWS
+
+/*CREATE OR ALTER VIEW vwLivroPreco AS
+	SELECT TOP 5 NomeLivro, PrecoLivro
+	FROM Livro
+	ORDER BY PrecoLivro;
+*/
+
+SELECT * FROM vwLivroPreco
+
+EXEC sp_helptext vwLivroPReco
+
+IF OBJECT_ID('vwLivroAssunto', 'view') IS NOT NULL
+	DROP VIEW vwLivroAssunto;
+GO
+CREATE VIEW vwLivroAssunto AS
+	SELECT L.NomeLivro Livro, A.NomeAssunto Assunto
+	FROM Livro L
+	JOIN Assunto A
+	ON L.IdAssunto = A.IdAssunto
+GO
+
+SELECT * FROM vwLivroAssunto;
+
+ALTER VIEW vwLivroAssunto AS
+	SELECT L.NomeLivro Livro, L.ISBN13, A.NomeAssunto Assunto
+	FROM Livro L
+	JOIN Assunto A
+	ON L.IdAssunto = A.IdAssunto;
+
+DROP VIEW vwLivroPreco;
