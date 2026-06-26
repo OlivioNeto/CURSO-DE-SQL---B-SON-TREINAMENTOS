@@ -884,3 +884,38 @@ GO
 
 INSERT INTO Autor VALUES ('Clarice', 'Lispector');
 SELECT * FROM Autor;
+
+-- VIGÉSIMA SEXTA PARTE - FUNÇÕES UDF
+
+-- funções escalares, retorna apenas um valor
+
+CREATE FUNCTION valor_total(@inferior SMALLINT, @superior SMALLINT)
+RETURNS REAL
+AS
+BEGIN
+	DECLARE @media REAL
+	SELECT @media = AVG(PrecoLivro)
+	FROM Livro
+	WHERE IdLivro BETWEEN @inferior AND @superior
+	RETURN @media
+END;
+
+SELECT dbo.valor_total(101,105) Total;
+
+-- função com valor de tabela, retorna mais dados
+
+CREATE FUNCTION retorna_itens(@valor REAL)
+RETURNS TABLE
+AS
+RETURN (
+	SELECT L.NomeLivro, A.NomeAssunto, E.NomeEditora
+	FROM Livro L
+	JOIN Assunto A ON L.IdAssunto = A.IdAssunto
+	JOIN Editora E ON L.IdEditora = E.IdEditora
+	WHERE L.PrecoLivro > @valor
+);
+
+SELECT NomeLivro, NomeAssunto
+FROM dbo.retorna_itens(62.00)
+
+DROP FUNCTION retorna_itens
