@@ -919,3 +919,44 @@ SELECT NomeLivro, NomeAssunto
 FROM dbo.retorna_itens(62.00)
 
 DROP FUNCTION retorna_itens
+
+-- VIGÉSIMA SÉTIMA PARTE - FUNÇÕES DE DATA E HORA
+
+-- pegando a data e hora relacionada ao meu terminal
+
+SELECT getdate() AS 'Data e hota atual';
+SELECT getutcdate () AS 'Data hora UTC';
+SELECT CURRENT_TIMESTAMP AS 'Data e hora atual';
+
+SELECT YEAR(getdate()) AS Ano;
+SELECT MONTH(getdate()) AS Mês;
+SELECT DAY(getdate()) AS Dia;
+
+-- diferença entre datas
+
+SELECT DATEDIFF(HH, GETUTCDATE(), GETDATE()) AS 'UTC Jales';
+SELECT DATEDIFF(DD, '2004-08-04', GETDATE()) AS 'Dias Vividos';
+
+-- partes de uma data
+SELECT
+DATEPART(YYYY, DataPub) AS 'Ano de Lançamento',
+DATEPART(DD, DataPub) AS 'Dia do Lançamento',
+DATENAME(MM, DataPub) AS 'Mês do Lançamento'
+FROM Livro;
+
+-- soma de datas, mesmo com números negativos
+
+SELECT DataPub 'Publicação EUA', DATEADD(DD,50,DataPub) AS 'Publicação no Brasil'
+FROM Livro
+WHERE IdLivro = 104
+
+SELECT DATEADD(DD,20,GETDATE());
+
+-- convertendo datas
+
+SELECT CONVERT(VARCHAR(10), GETDATE(), 103) Hoje;
+
+SELECT L.NomeLivro Título, CONVERT(VARCHAR(10), L.DataPub, 103) Publicação
+FROM Livro L
+WHERE L.DataPub >= CONVERT(VARCHAR(10), '10/10/2015', 103)
+ORDER BY L.DataPub;
