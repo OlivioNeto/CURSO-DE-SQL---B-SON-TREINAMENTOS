@@ -230,3 +230,174 @@ WHERE PrecoLivro > (
     FROM Livro
 );
 /* a forma correta é como a cima*/
+
+
+-- 25/06/2026
+/*
+Liste: Nome do livro, Preço, Nome da editora. Somente para livros publicados após 2010 
+e pertencentes às editoras: Aleph, Novatec, Record
+*/
+
+SELECT NomeLivro 'Nome do Livro', PrecoLivro 'Valor do Livro'
+FROM Livro
+WHERE IdEditora IN (
+	SELECT IdEditora
+	FROM Livro
+	WHERE IdEditora IN (
+		SELECT IdEditora
+		FROM Editora
+		WHERE NomeEditora IN ('Aleph', 'Novatec', 'Record') AND DataPub > '20101231'
+		)		
+);
+/* a versão a cima foi até onde consegui chegar*/
+
+SELECT 
+    L.NomeLivro AS 'Nome do Livro', 
+    L.PrecoLivro AS 'Valor do Livro',
+    (SELECT E.NomeEditora FROM Editora E WHERE E.IdEditora = L.IdEditora) AS 'Nome da Editora'
+FROM 
+    Livro L
+WHERE 
+    L.DataPub > '2010-12-31'
+    AND L.IdEditora IN (
+        SELECT E.IdEditora 
+        FROM Editora E 
+        WHERE E.NomeEditora IN ('Aleph', 'Novatec', 'Record')
+);
+/* essa versão foi com auxilio do GEMINI e o GPT disse estar correta*/
+
+-- Mostre: Nome completo do autor e nome do livro. Somente para autores cujo sobrenome contenha a letra: r em qualquer posição.
+
+SELECT AU.NomeAutor + ' ' + AU.SobrenomeAutor [Nome completo], L.NomeLivro 'Nome do Livro'
+FROM LivroAutor LA
+	JOIN Livro L ON LA.IdLivro = L.IdLivro
+	JOIN AUTOR AU ON LA.IdAutor = AU.IdAutor
+WHERE AU.SobrenomeAutor LIKE '%r%'
+ORDER BY AU.NomeAutor;
+
+-- Retorne todos os livros cujo preço seja maior que o menor preço cadastrado.
+
+SELECT NomeLivro, PrecoLivro
+FROM Livro
+WHERE PrecoLivro > (
+    SELECT MIN(PrecoLivro)
+    FROM Livro
+)
+ORDER BY NomeLivro;
+
+-- Mostre: Nome do livro e número de páginas. Dos livros que possuem mais páginas que a média de páginas cadastradas.
+
+SELECT NomeLivro 'Nome do Livro', NumeroPaginas 'Quantidade de páginas'
+FROM Livro
+WHERE NumeroPaginas > (
+	SELECT AVG(NumeroPaginas)
+	FROM Livro
+)
+ORDER BY [Nome do Livro];
+
+-- Mostre os nomes das editoras que possuem pelo menos um livro cadastrado.
+
+SELECT NomeLivro
+FROM Livro
+WHERE IdEditora IN (
+	SELECT IdEditora
+	FROM Livro
+	WHERE NomeLivro NOT LIKE ''
+	);
+/* com subconsulta chego até aqui, agora com INNER JOIN facilmente eu colocaria o nome da editora para aparecer*/
+/* versão a cima foi o que conseguir chegar, abaixo com a correção*/
+
+SELECT NomeEditora
+FROM Editora
+WHERE IdEditora IN
+(
+    SELECT IdEditora
+    FROM Livro
+);
+
+--Liste: Nome do livro, nome da editora, nome do assunto. Somente para livros cujo assunto seja: Informática, eletrônica, matemática
+
+SELECT L.NomeLivro 'Nome do Livro', E.NomeEditora Editora, A.NomeAssunto 'Qual assunto'
+FROM Livro L
+	JOIN Editora E ON L.IdEditora = E.IdEditora
+	JOIN ASSUNTO A ON L.IdAssunto = A.IdAssunto
+	WHERE A.NomeAssunto IN ('Informática', 'Eletrônica', 'Matemática');
+
+-- Mostre: Nome completo do autor, nome do livro, preço. Somente para livros com preço acima da média.
+
+SELECT AU.NomeAutor + ' ' + AU.SobrenomeAutor 'Nome Completo', L.NomeLivro 'Nome do Livro', L.PrecoLivro Preço
+FROM LivroAutor LA
+	JOIN Livro L ON LA.IdLivro = L.IdLivro
+	JOIN Autor AU ON  LA.IdAutor = AU.IdAutor
+WHERE PrecoLivro > (
+	SELECT AVG(PrecoLivro) FROM Livro
+);
+
+-- Mostre todas as editoras cadastradas, mesmo aquelas que não possuem livros. Exiba: Nome da editora, nome do livro, utilizando LEFT JOIN
+
+SELECT E.NomeEditora 'Nome da Editora', L.NomeLivro 'Nome do Livro'
+FROM Editora E
+	LEFT JOIN Livro L 
+	ON E.IdEditora = L.IdEditora
+
+-- Mostre todos os livros e suas editoras. Exiba: Nome do livro, nome da editora, utilizando RIGHT JOIN
+
+SELECT L.NomeLivro 'Nome do Livro', E.NomeEditora 'Nome da Editora'
+FROM Editora E 
+	RIGHT JOIN Livro L
+	ON E.IdEditora = L.IdEditora
+/* apenas erro de lógica do right, onde eu coloquei from livro righ editora, sendo que era como está agora*/
+
+-- Mostre Nome da editora, nome do livro incluindo registros sem correspondência dos dois lados, utilizando FULL JOIN
+
+SELECT NomeEditora 'Nome da Editora', NomeLivro 'Nome do Livro'
+FROM Editora E
+	FULL JOIN Livro L
+	ON E.IdEditora = L.IdEditora
+
+/* Monte uma consulta retornando: Nome do livro, nome completo do autor, nome da editora, preço.
+Regras: preço acima da média dos livros, editora em (Aleph, Novatec, Microsoft Press, Record), sobrenome do autor contendo a letra a e
+ordenar do mais caro para o mais barato.
+*/
+
+SELECT L.NomeLivro 'Nome do Livro', 
+(SELECT PrecoLivro FROM Livro L WHERE PrecoLivro > (SELECT AVG(L.PrecoLivro) FROM Livro)) AS 'Preço do Livro', 
+AU.NomeAutor + ' ' + AU.SobrenomeAutor [Nome Completo], E.NomeEditora 'Nome da Editora'
+FROM LivroAutor LA
+	JOIN Livro L ON LA.IdLivro = L.IdLivro
+	JOIN Autor AU ON LA.IdAutor = AU.IdAutor
+	JOIN Editora E ON L.IdEditora = E.IdEditora
+	WHERE E.NomeEditora IN (
+		SELECT E.NomeEditora
+		FROM Editora
+		WHERE E.NomeEditora IN ('Aleph', 'Novatec', 'Microsoft Press', 'Record')
+		AND AU.SobrenomeAutor IN (
+			SELECT AU.SobrenomeAutor
+			FROM Autor
+			WHERE AU.SobrenomeAutor LIKE '%a%')
+		)
+ORDER BY [Preço do Livro] DESC
+/*eu consegui mostrar tudo com as cláusulas, porem hora que fui implantar a média de erro, mas sem implantar ela eu consegui fazer normalmente
+(SELECT PrecoLivro FROM Livro L WHERE PrecoLivro > (SELECT AVG(L.PrecoLivro) FROM Livro)) AS 'Preço do Livro',
+essa linha a cima foi implantada na tentativa de achar a média, mas antes mesmo com subconsultas desnecessárias aparecia tudo o que foi pedido
+exceto a média, o exercício de forma correta consta abaixo
+*/
+
+SELECT L.NomeLivro AS [Nome do Livro],
+    AU.NomeAutor + ' ' + AU.SobrenomeAutor AS [Nome Completo],
+    E.NomeEditora AS [Nome da Editora],
+    L.PrecoLivro AS [Preço do Livro]
+FROM LivroAutor LA
+    INNER JOIN Livro L
+        ON LA.IdLivro = L.IdLivro
+    INNER JOIN Autor AU
+        ON LA.IdAutor = AU.IdAutor
+    INNER JOIN Editora E
+        ON L.IdEditora = E.IdEditora
+WHERE L.PrecoLivro > (
+        SELECT AVG(PrecoLivro)
+        FROM Livro
+)
+AND E.NomeEditora IN ('Aleph', 'Novatec', 'Microsoft Press', 'Record')
+AND AU.SobrenomeAutor LIKE '%a%'
+ORDER BY L.PrecoLivro DESC;
