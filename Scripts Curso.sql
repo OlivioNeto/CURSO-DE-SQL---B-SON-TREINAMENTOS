@@ -811,7 +811,76 @@ BEGIN
 END
 GO
 
-EXEC sp_cadastra_editora 'Mskron Books';
+EXEC sp_cadastra_editora 'Makron Books';
 SELECT * FROM Editora
 
 DROP PROCEDURE sp_LivroValor
+
+-- VIGÉSIMA QUINTA PARTE - TRIGGERS (GATILHOS)
+
+-- trigger after
+
+CREATE OR ALTER TRIGGER tg_editora_cadastrada
+ON Editora
+AFTER INSERT
+AS
+BEGIN
+	SELECT CONCAT('Há ', COUNT(*), ' editoras cadastradas') AS Cadastros
+	FROM Editora;
+END
+GO
+
+INSERT INTO Editora VALUES ('Nova Editora');
+SELECT * FROM Editora
+
+-- trigger INSTEAD OF
+
+CREATE OR ALTER TRIGGER tg_bloqueia_autor
+ON Autor
+INSTEAD OF INSERT
+AS
+BEGIN
+	PRINT 'Cadastro de autores não permitido no momento';
+END
+GO
+
+INSERT INTO Autor VALUES ('José', 'De Alencar');
+SELECT * FROM Autor;
+
+ALTER TABLE Autor
+DISABLE TRIGGER tg_bloqueia_autor;
+
+ALTER TABLE Autor
+ENABLE TRIGGER tg_bloqueia_autor;
+
+DROP TRIGGER tg_bloqueia_autor;
+
+-- Visualizar os triggers
+
+EXEC sp_helptrigger @tabname=Editora;
+
+SELECT * FROM sys.triggers
+WHERE is_disabled = 0 OR is_disabled = 1;
+
+-- fazendo um trigger que ao ser disparado executa uma procedure
+
+CREATE PROCEDURE sp_consulta_autores
+AS
+BEGIN
+	SELECT NomeAutor, SobrenomeAutor 
+	FROM Autor
+	ORDER BY NomeAutor
+END
+GO
+
+CREATE OR ALTER TRIGGER tg_insere_autores
+ON Autor
+AFTER INSERT
+AS
+BEGIN
+	EXEC sp_consulta_autores;
+END
+GO
+
+INSERT INTO Autor VALUES ('Clarice', 'Lispector');
+SELECT * FROM Autor;
