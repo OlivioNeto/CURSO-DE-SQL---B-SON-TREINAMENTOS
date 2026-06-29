@@ -960,3 +960,64 @@ SELECT L.NomeLivro Título, CONVERT(VARCHAR(10), L.DataPub, 103) Publicação
 FROM Livro L
 WHERE L.DataPub >= CONVERT(VARCHAR(10), '10/10/2015', 103)
 ORDER BY L.DataPub;
+
+-- VIGÉSIMA OITAVA PARTE - MANIPULAÇÃO DE STRINGS
+
+-- len
+SELECT NomeLivro, LEN(NomeLivro) 'Comprimento do Nome'
+FROM Livro
+
+SELECT NomeLivro, ISBN13, LEN(ISBN13) 'Tamanho ISBN'
+FROM Livro
+WHERE LEN(ISBN13) <> 13;
+
+-- lower e upper
+SELECT LOWER (NomeLivro) 'Nome minúsculo'
+FROM Livro;
+
+SELECT UPPER (NomeAssunto) Assunto
+FROM Assunto;
+
+INSERT INTO Autor (NomeAutor, SobrenomeAutor)
+VALUES (UPPER('Olivio'), UPPER('Neto'));
+
+-- ltrim, rtrim e trim
+SELECT LTRIM(NomeLivro) 'Livro sem espaços no começo'
+FROM Livro;
+
+SELECT RTRIM(NomeLivro) 'Livro sem espaços no final'
+FROM Livro;
+
+INSERT INTO Autor (NomeAutor, SobrenomeAutor)
+VALUES (TRIM('Daniel'), TRIM('Craig'));
+
+-- replace
+UPDATE Livro
+SET NomeLivro = REPLACE(NomeLivro, '2016', '2022')
+where NomeLivro LIKE '%Server 20%';
+
+SELECT * FROM Livro
+
+-- substring
+SELECT SUBSTRING(NomeLivro, 1, 3) AS Código
+FROM Livro
+
+UPDATE EDITORA
+SET NomeEditora = UPPER (NomeEditora);
+
+SELECT * FROM Editora
+
+UPDATE Editora
+SET NomeEditora = UPPER(LEFT(NomeEditora, 1)) +
+				  LOWER(SUBSTRING(NomeEditora, 2, LEN(NomeEditora)))
+				  WHERE NomeEditora IS NOT NULL;
+
+-- right
+SELECT ISBN13, RIGHT(ISBN13, 4) 'Título e DV'
+FROM Livro
+
+-- concat 
+SELECT CONCAT('Olivio ', 'Neto');
+
+SELECT CONCAT(NomeAutor, ' ', SobrenomeAutor) 'Nome Completo'
+FROM Autor
