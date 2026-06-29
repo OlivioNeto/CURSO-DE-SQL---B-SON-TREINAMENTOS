@@ -1021,3 +1021,32 @@ SELECT CONCAT('Olivio ', 'Neto');
 
 SELECT CONCAT(NomeAutor, ' ', SobrenomeAutor) 'Nome Completo'
 FROM Autor
+
+
+-- VIGÉSIMA NONA PARTE - ÍNDICES
+
+-- clusterizados e não clusterizados
+
+CREATE INDEX ind_nome_livro
+ON Livro(NomeLivro);
+
+SELECT NomeLivro
+FROM Livro
+
+EXEC sp_helpindex Livro;
+
+ALTER INDEX ind_nome_livro
+ON Livro
+DISABLE;
+
+ALTER INDEX ind_nome_livro
+ON Livro
+REBUILD;
+
+ALTER INDEX ALL ON Livro
+DISABLE;
+
+ALTER INDEX ALL ON Livro
+REBUILD;
+
+DROP INDEX Livro.ind_nome_livro;
