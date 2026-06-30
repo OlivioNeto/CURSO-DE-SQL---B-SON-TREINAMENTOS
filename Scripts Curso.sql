@@ -676,11 +676,11 @@ CROSS JOIN Assunto;
 
 -- VIGÉSIMA SEGUNDA PARTE - EXIBIÇÕES, VIEWS
 
-/*CREATE OR ALTER VIEW vwLivroPreco AS
+CREATE OR ALTER VIEW vwLivroPreco AS
 	SELECT TOP 5 NomeLivro, PrecoLivro
 	FROM Livro
 	ORDER BY PrecoLivro;
-*/
+
 
 EXEC sp_helptext vwLivroPReco
 

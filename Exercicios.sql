@@ -401,3 +401,178 @@ WHERE L.PrecoLivro > (
 AND E.NomeEditora IN ('Aleph', 'Novatec', 'Microsoft Press', 'Record')
 AND AU.SobrenomeAutor LIKE '%a%'
 ORDER BY L.PrecoLivro DESC;
+
+
+-- 29/06/2026
+
+--Crie uma VIEW chamada vw_LivrosEditora que exiba: Nome do livro, nome da editora, preço. Ordene os resultados pelo nome do livro.
+CREATE OR ALTER VIEW vw_LivrosEditora AS
+	SELECT TOP 100 PERCENT L.NomeLivro 'Nome do Livro', E.NomeEditora Editora, PrecoLivro Preço
+	FROM Livro L 
+	JOIN Editora E ON L.IdEditora = E.IdEditora
+	ORDER BY [Nome do Livro];
+
+SELECT * FROM vw_LivrosEditora;
+
+/* Foi essa versão que fiz com auxílio do GEMINI, quando fiz as correções com o GPT, me foi sugerido retirar o 100 percent e fazer assim:*/
+
+CREATE OR ALTER VIEW vw_LivrosEditora AS
+SELECT L.NomeLivro, E.NomeEditora, L.PrecoLivro FROM Livro L
+JOIN Editora E ON L.IdEditora = E.IdEditora;
+
+SELECT * FROM vw_LivrosEditora ORDER BY NomeLivro;
+
+-- Crie uma VIEW chamada vw_AutoresLivros que exiba: Nome completo do autor, nome do livro, nome do assunto
+CREATE OR ALTER VIEW vw_AutoresLivros AS
+	SELECT CONCAT(AU.NomeAutor, ' ', AU.SobrenomeAutor) 'Nome Completo', L.NomeLivro 'Nome do Livro', A.NomeAssunto Assunto
+	FROM LivroAutor LA
+	JOIN Autor AU ON LA.IdAutor = AU.IdAutor
+	JOIN Livro L ON LA.IdLivro = L.IdLivro
+	JOIN Assunto A ON L.IdAssunto = A.IdAssunto
+
+SELECT * FROM vw_AutoresLivros
+
+-- Crie uma Stored Procedure que liste todos os livros cujo preço seja maior que R$ 80,00.
+CREATE PROCEDURE sp_LivrosCaros
+AS
+BEGIN
+	SELECT NomeLivro 'Nome do Livro', PrecoLivro Valor
+	FROM Livro
+	WHERE PrecoLivro > 80.00
+END
+GO
+
+EXEC sp_LivrosCaros
+
+-- Crie uma Stored Procedure que receba um nome de editora e retorne todos os livros pertencentes a essa editora.
+
+CREATE OR ALTER PROCEDURE sp_LivrosPorEditora (@editora AS VARCHAR (20))
+AS
+BEGIN
+	SELECT L.NomeLivro 'Nome do Livro',E.NomeEditora 'Editora Desejada'
+	FROM Livro L
+	JOIN Editora E ON L.IdEditora = E.IdEditora
+	WHERE E.NomeEditora = @editora
+END
+
+EXEC sp_LivrosPorEditora 'Aleph'
+
+-- Crie uma Function que receba: preço do livro e retorne: CARO quando o preço for maior que R$ 100,00 ou BARATO caso contrário.
+
+CREATE OR ALTER FUNCTION retorna_status_livro(@valor DECIMAL(10,2))
+RETURNS VARCHAR (10)
+AS 
+BEGIN
+	DECLARE @resultado VARCHAR(10);
+    SET @resultado = CASE 
+    WHEN @valor > 100.00 THEN 'CARO'
+    ELSE 'BARATO'
+    END;
+    RETURN @resultado;
+END;
+
+SELECT NomeLivro, PrecoLivro, dbo.retorna_status_livro(PrecoLivro) AS 'Status do Preço'
+FROM Livro;
+
+-- Crie uma Procedure que receba um assunto e retorne: Nome do livro, nome da editora, nome do autor
+CREATE OR ALTER PROCEDURE recebe_assunto (@assunto AS VARCHAR (20)) 
+AS
+BEGIN
+	SELECT NomeLivro [Nome do Livro], NomeEditora [Nome da Editora], NomeAutor [Nome do autor], A.NomeAssunto AS [Assunto Desejado]
+	FROM LivroAutor LA
+	JOIN Livro L ON LA.IdLivro = L.IdLivro
+	JOIN Autor AU ON LA.IdAutor = AU.IdAutor
+	JOIN Editora E ON L.IdEditora = E.IdEditora
+	JOIN Assunto A ON L.IdAssunto = A.IdAssunto
+	WHERE NomeAssunto = @assunto
+END;
+
+EXEC recebe_assunto 'Ficção Científica';
+SELECT * FROM Assunto
+
+-- Crie uma Trigger que impeça inserir livros com preço menor ou igual a zero. Caso isso aconteça: cancelar a operação; exibir uma mensagem de erro.
+CREATE OR ALTER TRIGGER tg_bloqueia_preco_zerado
+ON Livro
+FOR INSERT
+AS
+BEGIN
+    IF EXISTS (SELECT 1 FROM inserted WHERE PrecoLivro <= 0)
+    BEGIN
+        ROLLBACK TRANSACTION;
+        RAISERROR ('Não foi possível concluir a operação. O preço do livro deve ser maior que zero!', 16, 1);
+    END
+END;
+
+-- Crie uma Trigger que impeça cadastrar livros com mais de 5000 páginas.
+CREATE OR ALTER TRIGGER tg_bloqueia_muitas_paginas
+ON Livro
+FOR INSERT
+AS
+BEGIN
+	IF EXISTS (SELECT 1 FROM inserted WHERE NumeroPaginas > 5000)
+	BEGIN
+		ROLLBACK TRANSACTION;
+		RAISERROR ('Não foi possível concluir a operação. O número de páginas deve ser menor que 5000!', 16,1);
+	END
+END;
+/* Foi proposto alterar de INSTEAD OF para FOR INSERT*/
+
+-- Crie uma Function que receba: IdLivro e devolva: Nome da Editora desse livro. Depois faça um SELECT utilizando essa função.
+CREATE OR ALTER FUNCTION retorna_editora_idlivro (@valor INT)
+RETURNS VARCHAR (50)
+AS 
+BEGIN
+	DECLARE @resultado VARCHAR (50)
+	SELECT @resultado = E.NomeEditora
+	FROM Livro L
+	JOIN Editora E ON L.IdEditora = E.IdEditora
+	WHERE L.IdLivro = @valor
+	RETURN @resultado;
+END;
+
+SELECT dbo.retorna_editora_idlivro (110) AS 'Editora do Livro';
+
+/*Imagine que você trabalha na biblioteca.
+O gerente pediu uma consulta que mostre: Nome do livro, nome completo do autor, nome da editora, nome do assunto, preço, 
+classificação (utilizando sua Function do exercício 5)
+Mostrar apenas livros:
+publicados após 2015;
+cujo preço seja maior que a média de todos os livros;
+pertencentes às editoras:
+Aleph
+Novatec
+Microsoft Press
+Ordenar: preço decrescente, nome do livro crescente.
+*/
+
+SELECT L.NomeLivro [Nome do Livro], CONCAT(AU.NomeAutor, ' ', AU.SobrenomeAutor) [Nome Completo], E.NomeEditora [Nome da Editora],
+A.NomeAssunto Assunto, L.PrecoLivro [Preço do Livro], dbo.retorna_status_livro(PrecoLivro) AS 'Status do Preço'
+FROM LivroAutor LA
+	JOIN Livro L ON LA.IdLivro = L.IdLivro
+	JOIN Autor AU ON LA.IdAutor = AU.IdAutor
+	JOIN Editora E ON L.IdEditora = E.IdEditora
+	JOIN Assunto A ON L.IdAssunto = A.IdAssunto
+	WHERE L.PrecoLivro > (
+		SELECT AVG(L.PrecoLivro) 
+		FROM Livro L
+		) 
+		AND	L.DataPub >= '2015-12-31' AND E.NomeEditora IN ('Aleph', 'Novatec', 'Microsoft Press') 
+ORDER BY L.PrecoLivro DESC, L.NomeLivro;
+
+--Mostre apenas o(s) livro(s) mais caro(s) da biblioteca. Se houver empate, todos devem aparecer.
+SELECT dbo.retorna_status_livro(PrecoLivro)
+FROM Livro L
+WHERE L.PrecoLivro IN(
+	SELECT MAX(L.PrecoLivro)
+	FROM Livro L
+	)
+
+/*versão abaixo corrigida pelo GPT*/
+
+SELECT NomeLivro, PrecoLivro
+FROM Livro
+WHERE PrecoLivro =
+(
+    SELECT MAX(PrecoLivro)
+    FROM Livro
+);
